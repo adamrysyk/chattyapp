@@ -21,12 +21,28 @@ class App extends Component {
     }
   }
 
+  componentDidMount() {
+    this.socket = new WebSocket("ws://192.168.33.10:4000")
+    this.socket.onopen = () => {
+      this.socket.onmessage = (event) => {
+        console.log(event.data)
+      }
+    };
+  }
+
+
+
+
   updateMessages = (newMessage) => {
+    console.log(newMessage)
     let newMessages = this.state.messages.slice(0); // make a clone of this.state.messages array
     newMessages.push(newMessage); // add/push the newMessage object into the newMessages array
+    console.log(newMessages)
+    this.socket.send(JSON.stringify(newMessage))
     this.setState({
       ...this.state, // clone the this.state object
       messages: newMessages // but while cloning it, change the messages value
+
     })
   }
 

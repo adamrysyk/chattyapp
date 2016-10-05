@@ -1,7 +1,7 @@
 {
-  "name": "react-simple-boilerplate",
+  "name": "ChattyApp",
   "version": "1.0.0",
-  "description": "Simple and lightweight Boilerplate for ReactJS projects",
+  "description": "A messenger app built with react",
   "scripts": {
     "lint": "eslint src",
     "start": "node server.js"

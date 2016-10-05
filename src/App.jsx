@@ -21,8 +21,16 @@ class App extends Component {
     }
   }
 
+  updateMessages = (newMessage) => {
+    let newMessages = this.state.messages.slice(0); // make a clone of this.state.messages array
+    newMessages.push(newMessage); // add/push the newMessage object into the newMessages array
+    this.setState({
+      ...this.state, // clone the this.state object
+      messages: newMessages // but while cloning it, change the messages value
+    })
+  }
+
   render() {
-    let myProp = "LALALALA"
     console.log("Rendering <App />")
     return (
       <div className="wrapper">
@@ -30,7 +38,10 @@ class App extends Component {
           <h1>Chatty</h1>
         </nav>
         <MessageList currUser={ this.state.currentUser.name } messageList={ this.state.messages } />
-        <ChatBar currUser={ this.state.currentUser.name} />
+        <ChatBar
+          currUser={ this.state.currentUser.name }
+          updateMessages={ this.updateMessages }
+        />
       </div>
     );
   }

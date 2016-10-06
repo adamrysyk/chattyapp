@@ -7,17 +7,8 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: [
-        {
-          username: "Bob",
-          content: "Has anyone seen my marbles?",
-        },
-        {
-          username: "Anonymous",
-          content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
-        }
-      ]
+      currentUser: {}, // optional. if currentUser is not defined, it means the user is Anonymous
+      messages: []
     }
   }
 
@@ -25,25 +16,28 @@ class App extends Component {
     this.socket = new WebSocket("ws://192.168.33.10:4000")
     this.socket.onopen = () => {
       this.socket.onmessage = (event) => {
-        console.log(event.data)
+        let newMessages = this.state.messages.slice(0); // make a clone of this.state.messages array
+        newMessages.push(JSON.parse(event.data));
+        this.setState({
+          ...this.state, // clone the this.state object
+          messages: newMessages // but while cloning it, change the messages value
+        })
       }
     };
   }
 
-
-
+  updateUser = (newUser) => {
+    debugger;
+    this.setState({
+      ...this.state,
+      currentUser: newUser
+    })
+  }
 
   updateMessages = (newMessage) => {
-    console.log(newMessage)
-    let newMessages = this.state.messages.slice(0); // make a clone of this.state.messages array
-    newMessages.push(newMessage); // add/push the newMessage object into the newMessages array
-    console.log(newMessages)
+     // add/push the newMessage object into the newMessages array
     this.socket.send(JSON.stringify(newMessage))
-    this.setState({
-      ...this.state, // clone the this.state object
-      messages: newMessages // but while cloning it, change the messages value
 
-    })
   }
 
   render() {
@@ -53,9 +47,10 @@ class App extends Component {
         <nav>
           <h1>Chatty</h1>
         </nav>
-        <MessageList currUser={ this.state.currentUser.name } messageList={ this.state.messages } />
+        <MessageList messageList={ this.state.messages } />
         <ChatBar
           currUser={ this.state.currentUser.name }
+          updateUser={ this.updateUser }
           updateMessages={ this.updateMessages }
         />
       </div>

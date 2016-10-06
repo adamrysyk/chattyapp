@@ -34,7 +34,7 @@ class ChatBar extends Component {
   _handleUserKeyPress = (e) => {
     if (e.key === 'Enter') {
       this.props.updateUser({
-        name: this.state.currUser
+        name: this.state.currUser.trim()
       })
     }
   };

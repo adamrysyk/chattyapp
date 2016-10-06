@@ -7,7 +7,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentUser: {}, // optional. if currentUser is not defined, it means the user is Anonymous
+      currentUser: {name: undefined}, // optional. if currentUser is not defined, it means the user is Anonymous
       messages: []
     }
   }
@@ -17,7 +17,9 @@ class App extends Component {
     this.socket.onopen = () => {
       this.socket.onmessage = (event) => {
         let newMessages = this.state.messages.slice(0); // make a clone of this.state.messages array
-        newMessages.push(JSON.parse(event.data));
+        let serverMessage = JSON.parse(event.data)
+        serverMessage.type
+        newMessages.push(serverMessage);
         this.setState({
           ...this.state, // clone the this.state object
           messages: newMessages // but while cloning it, change the messages value
@@ -27,7 +29,8 @@ class App extends Component {
   }
 
   updateUser = (newUser) => {
-    debugger;
+    // old name is this.state.currentUser.name
+    // new name is newUser.name
     this.setState({
       ...this.state,
       currentUser: newUser

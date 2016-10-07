@@ -46,14 +46,6 @@ class App extends Component {
     }
   }
 
-  componentWillUnmount() {
-    setTimeout( () => {
-      this.socket.send(JSON.stringify({
-        type: 'newUser'
-      }))
-    }, 100);
-  }
-
   updateOnlineUsers = () => {
     setTimeout( () => {
       this.socket.send(JSON.stringify({
@@ -61,7 +53,6 @@ class App extends Component {
       }))
     }, 100);
   }
-
 
   updateUser = (newUser) => {
     console.log(newUser)
@@ -112,6 +103,7 @@ class App extends Component {
     );
   }
 }
+
 export default App;
 
 

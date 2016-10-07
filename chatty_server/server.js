@@ -20,26 +20,21 @@ const wss = new SocketServer({ server });//does the port need to go here as well
 // When a client connects they are assigned a socket, represented by
 // the ws parameter in the callback.
 
-
-
   wss.broadcast = function broadcast(data) {
     wss.clients.forEach(function each(client) {
       client.send(data);
     });
   };
 
-
 wss.on('connection', (ws) => {
   console.log('Client connected');
 
-   ws.on('message',(message) => {
+  ws.on('message',(message) => {
 
     let parsedMsg = JSON.parse(message);
-
     let colors = ['red', 'blue', 'green', 'purple'];
-
     let outgoingMessage = {};
-    console.log(parsedMsg.type);
+
     if (parsedMsg.type === 'postMessage') {
 
       outgoingMessage = {
@@ -58,7 +53,6 @@ wss.on('connection', (ws) => {
       }
 
     } else if (parsedMsg.type === 'newUser') {
-      console.log(wss.clients)
       outgoingMessage = {
         type: 'userCount',
         content: wss.clients.length,
@@ -66,18 +60,26 @@ wss.on('connection', (ws) => {
       }
     }
 
-    console.log(outgoingMessage)
     wss.broadcast(JSON.stringify(outgoingMessage));
 
   })
 
   ws.send("Connected to server")
 
-
-
-
-
-
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
-  ws.on('close', () => console.log('Client disconnected'));
-});
+  ws.on('close', (ws) => {
+
+    console.log('Client disconnected')
+
+      let outgoingUserCount = {
+        type: 'userCount',
+        content: wss.clients.length
+      }
+
+      wss.broadcast(JSON.stringify(outgoingUserCount))
+  })
+})
+
+
+
+

@@ -38,9 +38,6 @@ class ChatBar extends Component {
           name: this.state.currUser.trim()
         })
       }
-      // console.log(this.state.currUser)
-      // console.log(this.props.currUser)
-      // console.log(`${this.props.currUser} changed their name to ${this.state.currUser}`)
     }
   };
 
@@ -60,7 +57,6 @@ class ChatBar extends Component {
       })
     }
   }
-
 
   render() {
     console.log("Rendering <ChatBar />")
@@ -86,4 +82,5 @@ class ChatBar extends Component {
     );
   }
 }
+
 export default ChatBar;

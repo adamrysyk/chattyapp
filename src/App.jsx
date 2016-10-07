@@ -11,10 +11,10 @@ class App extends Component {
       messages: [],
       onlineUsers: 0
     }
-  }
+  };
 
   componentDidMount() {
-    this.socket = new WebSocket("ws://192.168.33.10:4000")
+    this.socket = new WebSocket("ws://192.168.33.10:4000");
 
     this.updateOnlineUsers();
 
@@ -52,10 +52,9 @@ class App extends Component {
         type: 'newUser'
       }))
     }, 100);
-  }
+  };
 
   updateUser = (newUser) => {
-    console.log(newUser)
 
     this.setState({
       ...this.state,
@@ -63,7 +62,7 @@ class App extends Component {
         ...this.state.currentUser,
         ...newUser
       }
-    })
+    });
 
     if (this.state.currentUser.name === '') {
       this.socket.send(JSON.stringify({
@@ -83,7 +82,7 @@ class App extends Component {
   updateMessages = (newMessage) => {
     this.socket.send(JSON.stringify(newMessage))
 
-  }
+  };
 
   render() {
     console.log("Rendering <App />")
@@ -102,7 +101,7 @@ class App extends Component {
       </div>
     );
   }
-}
+};
 
 export default App;
 

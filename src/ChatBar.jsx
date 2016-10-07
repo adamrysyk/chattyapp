@@ -8,14 +8,14 @@ class ChatBar extends Component {
       currUser: '',
       message: ''
     }
-  }
+  };
 
   componentDidMount() {
     this.setState({
       ...this.state,
       currUser: this.props.currUser ? this.props.currUser : ''
     })
-  }
+  };
 
   handleInputMessage = (e) => {
     this.setState({
@@ -56,7 +56,7 @@ class ChatBar extends Component {
         message: ''
       })
     }
-  }
+  };
 
   render() {
     console.log("Rendering <ChatBar />")
@@ -81,6 +81,6 @@ class ChatBar extends Component {
       </footer>
     );
   }
-}
+};
 
 export default ChatBar;

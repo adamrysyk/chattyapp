@@ -7,38 +7,89 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentUser: {name: undefined}, // optional. if currentUser is not defined, it means the user is Anonymous
-      messages: []
+      currentUser: {name: "", color: 'black'}, // optional. if currentUser is not defined, it means the user is Anonymous
+      messages: [],
+      onlineUsers: 0
     }
   }
 
   componentDidMount() {
     this.socket = new WebSocket("ws://192.168.33.10:4000")
+
+    this.updateOnlineUsers();
+
+    window.addEventListener("unload", this.updateOnlineUsers());
+
     this.socket.onopen = () => {
       this.socket.onmessage = (event) => {
-        let newMessages = this.state.messages.slice(0); // make a clone of this.state.messages array
-        let serverMessage = JSON.parse(event.data)
-        serverMessage.type
-        newMessages.push(serverMessage);
-        this.setState({
-          ...this.state, // clone the this.state object
-          messages: newMessages // but while cloning it, change the messages value
-        })
+        let serverMessage = JSON.parse(event.data);
+
+        if (serverMessage.type === 'userCount') {
+          this.setState({
+            ...this.state,
+            currentUser: {
+              ...this.state.currentUser,
+              color: serverMessage.color
+            },
+            onlineUsers: serverMessage.content
+          })
+
+        } else {
+          let newMessages = this.state.messages.slice(0); // make a clone of this.state.messages array
+          newMessages.push(serverMessage);
+          this.setState({
+            ...this.state, // clone the this.state object
+            messages: newMessages // but while cloning it, change the messages value
+          })
+        }
       }
-    };
+    }
   }
 
+  componentWillUnmount() {
+    setTimeout( () => {
+      this.socket.send(JSON.stringify({
+        type: 'newUser'
+      }))
+    }, 100);
+  }
+
+  updateOnlineUsers = () => {
+    setTimeout( () => {
+      this.socket.send(JSON.stringify({
+        type: 'newUser'
+      }))
+    }, 100);
+  }
+
+
   updateUser = (newUser) => {
-    // old name is this.state.currentUser.name
-    // new name is newUser.name
+    console.log(newUser)
+
     this.setState({
       ...this.state,
-      currentUser: newUser
+      currentUser: {
+        ...this.state.currentUser,
+        ...newUser
+      }
     })
+
+    if (this.state.currentUser.name === '') {
+      this.socket.send(JSON.stringify({
+        type: "postNotification",
+        content: `Anon changed their name to ${newUser.name}`
+      }))
+    }
+
+    else if (newUser.name !== this.state.currentUser.name) {
+      this.socket.send(JSON.stringify({
+        type: "postNotification",
+        content: `${this.state.currentUser.name} changed their name to ${newUser.name}`
+      }))
+    }
   }
 
   updateMessages = (newMessage) => {
-     // add/push the newMessage object into the newMessages array
     this.socket.send(JSON.stringify(newMessage))
 
   }
@@ -49,10 +100,11 @@ class App extends Component {
       <div className="wrapper">
         <nav>
           <h1>Chatty</h1>
+          <p>{`${this.state.onlineUsers} users online`}</p>
         </nav>
         <MessageList messageList={ this.state.messages } />
         <ChatBar
-          currUser={ this.state.currentUser.name }
+          currUser={ this.state.currentUser }
           updateUser={ this.updateUser }
           updateMessages={ this.updateMessages }
         />
@@ -61,3 +113,6 @@ class App extends Component {
   }
 }
 export default App;
+
+
+

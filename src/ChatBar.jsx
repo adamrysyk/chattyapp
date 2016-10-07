@@ -33,9 +33,14 @@ class ChatBar extends Component {
 
   _handleUserKeyPress = (e) => {
     if (e.key === 'Enter') {
-      this.props.updateUser({
-        name: this.state.currUser.trim()
-      })
+      if (e.target.value.trim() !== '') {
+        this.props.updateUser({
+          name: this.state.currUser.trim()
+        })
+      }
+      // console.log(this.state.currUser)
+      // console.log(this.props.currUser)
+      // console.log(`${this.props.currUser} changed their name to ${this.state.currUser}`)
     }
   };
 
@@ -43,8 +48,10 @@ class ChatBar extends Component {
     if (e.key === 'Enter') {
       if (this.state.message) {
         this.props.updateMessages({
-          username: this.props.currUser ? this.props.currUser : 'Anon',
-          content: this.state.message
+          type: "postMessage",
+          username: this.props.currUser.name ? this.props.currUser.name : 'Anon',
+          content: this.state.message,
+          color: this.props.currUser.color
         })
       }
       this.setState({
@@ -63,7 +70,7 @@ class ChatBar extends Component {
           id="username"
           type="text"
           placeholder="Type a username and hit ENTER"
-          value={ this.state.currUser }
+          value={ this.state.currUser.name }
           onChange={ this.handleInputUser}
           onKeyPress={this._handleUserKeyPress}
         />

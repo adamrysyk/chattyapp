@@ -24,7 +24,7 @@ const wss = new SocketServer({ server });//does the port need to go here as well
 
   wss.broadcast = function broadcast(data) {
     wss.clients.forEach(function each(client) {
-      client.send(JSON.stringify(data));
+      client.send(data);
     });
   };
 
@@ -33,15 +33,41 @@ wss.on('connection', (ws) => {
   console.log('Client connected');
 
    ws.on('message',(message) => {
-    console.log(`User ${JSON.parse(message).username} said ${JSON.parse(message).content}`);
 
-    let outgoingMessage = {
-      id: uuid.v4(),
-      username: JSON.parse(message).username,
-      content: JSON.parse(message).content
+    let parsedMsg = JSON.parse(message);
+
+    let colors = ['red', 'blue', 'green', 'purple'];
+
+    let outgoingMessage = {};
+    console.log(parsedMsg.type);
+    if (parsedMsg.type === 'postMessage') {
+
+      outgoingMessage = {
+        id: uuid.v4(),
+        type: 'incomingMessage',
+        username: parsedMsg.username,
+        content: parsedMsg.content,
+        color: parsedMsg.color
+      }
+
+    } else if (parsedMsg.type === 'postNotification') {
+
+      outgoingMessage = {
+        type: 'incomingNotification',
+        content: parsedMsg.content
+      }
+
+    } else if (parsedMsg.type === 'newUser') {
+      console.log(wss.clients)
+      outgoingMessage = {
+        type: 'userCount',
+        content: wss.clients.length,
+        color: colors[Math.floor(Math.random() * 4)]
+      }
     }
 
-      wss.broadcast(outgoingMessage);
+    console.log(outgoingMessage)
+    wss.broadcast(JSON.stringify(outgoingMessage));
 
   })
 
